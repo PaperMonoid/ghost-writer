@@ -1,2 +1,2 @@
 # ghost-writer
-A web application to aid writting using markov chains.
+A web application to aid writing using markov chains.
