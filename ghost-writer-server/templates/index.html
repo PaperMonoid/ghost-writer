@@ -1,24 +1,12 @@
 <html>
     <head>
         <title>Ghost Writer</title>
-        <style>
-            #suggestion {
-                position: absolute;
-                color: #AAA;
-                background: #FFF;
-                z-index: -1;
-            }
-
-            #writer {
-                color: #222;
-                background: transparent;
-                z-index: 1;
-            }
-        </style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+        <link rel="stylesheet" href="/static/css/main.css">
     </head>
     <body>
-        <label id="backend">Back end</label>
-        <select for="backend">
+        <label for="backend">Back end</label>
+        <select id="backend">
             {% for ghost in ghosts_available %}
             <option value='{{ghost}}'>{{ghost}}</option>
             {% endfor %}
@@ -26,86 +14,12 @@
         <label for="lastWord">Last word</label>
         <input type="text" id="lastWord">
         <br/>
-        <textarea id="suggestion" cols="80" rows="20"></textarea>
-        <textarea id="writer" cols="80" rows="20"></textarea>
+        <br/>
+        <br/>
+        <center>
+            <textarea id="suggestion" cols="40" rows="40"></textarea>
+            <textarea id="writer" cols="40" rows="40"></textarea>
+        </center>
     </body>
-    <script>
-        let writer = document.getElementById('writer');
-        let suggestion = document.getElementById('suggestion');
-        let lastWord = document.getElementById('lastWord');
-        let suggestionResponse = [''];
-
-        function isWhitespace(character) {
-            return character == ' ' || character == '\t' || character == '\n';
-        }
-
-        function *getWords(text) {
-            let word = '';
-            let previous = ' ';
-            for (let i in text) {
-                if (isWhitespace(text[i])) {
-                    if (word != '') {
-                        yield word;
-                        word = '';
-                    }
-                } else {
-                    word += text[i];
-                }
-            }
-            if (word != '') {
-                yield word;
-            }
-        }
-
-        function getLastWord(n_gram) {
-            allWords = Array.from(getWords(writer.value));
-            return allWords.slice(-n_gram).join(' ');
-        }
-
-
-        writer.addEventListener("input", function(e) {
-            if (writer.value.length && writer.value[writer.value.length - 1] == ' ') {
-                // complete
-                lastWord.value = getLastWord(2);
-                fetch(`/markov_predict?word=${lastWord.value}&is_complete=1&n_gram=2&ghost=alanis`)
-                    .then(response => response.json())
-                    .then(data => {
-                        suggestionResponse = data;
-                        suggestion.value = writer.value + suggestionResponse[0];
-                    });
-            } else {
-                // incomplete
-                lastWord.value = getLastWord(2);
-                fetch(`/markov_predict?word=${lastWord.value}&is_complete=0&n_gram=2&ghost=alanis`)
-                    .then(response => response.json())
-                    .then(data => {
-                        suggestionResponse = data;
-                        
-                        let lastWordIndex = suggestionResponse[0].indexOf(lastWord.value);
-                        console.log(lastWordIndex);
-                        if (lastWordIndex > -1) {
-                            suggestion.value = writer.value + suggestionResponse[0].slice(lastWord.value.length);
-                        } else {
-                            suggestion.value = writer.value + ' ' + suggestionResponse[0];
-                        }
-                    });
-                //suggestion.value = writer.value + ' ' + suggestionResponse[0];
-            }
-        });
-
-        writer.addEventListener("keydown", function(e) {
-            if (e.keyCode == 9) {
-                e.preventDefault();
-                writer.value = suggestion.value;
-            }
-            if (writer.value.length && 
-                (writer.value[writer.value.length - 1] == ' ' ||
-                 writer.value[writer.value.length - 1] == '\n')
-            ) {
-                if (e.keyCode == 32 || e.keyCode == 13) {
-                    e.preventDefault();
-                }
-            }
-        });
-    </script>
+    <script type="text/javascript" src="/static/js/main.js"></script>
 </html>

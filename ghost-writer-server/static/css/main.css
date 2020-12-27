@@ -1,0 +1,23 @@
+#suggestion {
+    position: absolute;
+    color: #AAA;
+    font-family: 'Ubuntu', serif;
+    font-size: 24pt;
+    border: 0px;
+    background: #FFF;
+    z-index: -1;
+}
+
+#writer {
+    color: #444;
+    font-family: 'Ubuntu', serif;
+    font-size: 24pt;
+    border: 0px;
+    background: transparent;
+    z-index: 1;
+}
+
+#writer::-moz-selection, #writer::selection {
+    color: #555;
+    background: #CCC;
+}
